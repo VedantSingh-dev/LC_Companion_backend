@@ -1,9 +1,9 @@
 import os
-import google.generativeai as genai
-from google.generativeai import types
-#from dotenv import load_dotenv
+from google import genai
+from google.genai import types
+from dotenv import load_dotenv
 import markdown
-#load_dotenv()
+load_dotenv()
 
 def markdown_to_html(markdown_text):
 
@@ -58,10 +58,6 @@ def generate(data):
     )
     markdown_text = response.text
     return markdown_to_html(markdown_text)
-
-
-
-
 
 
 
