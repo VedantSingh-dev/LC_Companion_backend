@@ -1,11 +1,12 @@
+import requests
+import json
 import os
-import google.generativeai as genai
 from dotenv import load_dotenv
 import markdown
-
 load_dotenv()
 
 def markdown_to_html(markdown_text):
+
     html_body = markdown.markdown(markdown_text, extensions=["fenced_code", "tables"])
     html_page = f"""
     <!DOCTYPE html>
@@ -42,15 +43,56 @@ def markdown_to_html(markdown_text):
     return html_page
 
 def generate(data):
-    genai.configure(api_key=os.environ.get("GEMINI_API_KEY"))
-    model = genai.GenerativeModel("gemini-2.5-flash")
-    response = model.generate_content(
-        f"""{data}""",
-        system_instruction=(
-            "You are a Leetcode profile analyser who analyses leetcode profiles and helps users get better at DSA for interviews. "
-            "You will receive prompt in a json format which will contain the user's leetcode profile data."
-        ),
-        # You may add generation_config here if you want to set temperature, max_output_tokens, etc.
+        
+    API_KEY = os.environ.get("GEMINI_API_KEY") 
+    MODEL_NAME = "gemini-2.5-flash"
+    PROMPT = f"""{data}"""
+    SYSTEM_INSTRUCTION = """you are a Leetcode profile Analyser who analysis leetcode profiles and help user get better at dsa for interviews. You will receive prompt in a json format while will contain a user's leetcode profile data like[No of ques solved , contest history ,no of ques topic wise]etc. you have to analyse that data and give response which tells. Things that user am doing wrong or mistakes user am making how can user improve on that what are some good things about user profile etc then you have to give a 6 weeks roadmap which tells week wise what to do which question or topics to solve how to solve some good resources to look up eg, Neetcode 150 , striver etc. and last also tell the expected outcomes of that 6 weeks roadmap. You have to be very raw and honest"""
+
+    API_ENDPOINT = f"https://generativelanguage.googleapis.com/v1beta/models/{MODEL_NAME}:generateContent"
+
+
+    headers = {
+        "Content-Type": "application/json",
+    }
+
+    payload = {
+        "systemInstruction": {
+            "parts": [
+                {
+                    "text": SYSTEM_INSTRUCTION
+                }
+            ]
+        },
+        
+        "contents": [
+            {
+                "parts": [
+                    {
+                        "text": PROMPT
+                    }
+                ]
+            }
+        ]
+    }
+
+    params = {
+        "key": API_KEY
+    }
+
+    response = requests.post(
+        API_ENDPOINT, 
+        headers=headers, 
+        params=params, 
+        data=json.dumps(payload)
     )
-    markdown_text = response.text
-    return markdown_to_html(markdown_text)
+
+    response.raise_for_status() 
+
+    response_json = response.json()
+    generated_text = response_json['candidates'][0]['content']['parts'][0]['text']
+
+    return markdown_to_html(generated_text)
+
+
+
