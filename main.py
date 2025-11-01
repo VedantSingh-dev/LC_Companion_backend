@@ -1,26 +1,11 @@
 from fastapi import FastAPI
 from fastapi.responses import HTMLResponse
-from fastapi.middleware.cors import CORSMiddleware
 
 
 import LC_Stats
 import Roadmap
 
 app = FastAPI()
-
-origins = [
-    "http://127.0.0.1:5500",  
-    "http://localhost:5500",
-    
-]
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,            
-    allow_credentials=True,
-    allow_methods=["*"],              
-    allow_headers=["*"]              
-)
 
 @app.get("/")
 def greet():
@@ -34,3 +19,4 @@ def stats_getter(lc_id):
 def roadmap_getter(data):
     html = Roadmap.generate(data)
     return HTMLResponse(content=html)
+
