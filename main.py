@@ -9,9 +9,9 @@ app = FastAPI()
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  
+    allow_origins=["https://vedantsingh-dev.github.io", "http://127.0.0.1:5500"],
     allow_credentials=True,
-    allow_methods=["*"],  
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
@@ -20,7 +20,6 @@ def greet():
     return JSONResponse(
         content={"message": "Hello Welcome!"},
         headers={
-            "Content-Type": "application/json; charset=utf-8",
             "Cache-Control": "no-store",
             "X-Content-Type-Options": "nosniff"
         }
@@ -32,7 +31,6 @@ def stats_getter(lc_id):
     return JSONResponse(
         content=result,
         headers={
-            "Content-Type": "application/json; charset=utf-8",
             "Cache-Control": "no-store",
             "X-Content-Type-Options": "nosniff"
         }
@@ -44,7 +42,6 @@ def roadmap_getter(data):
     return HTMLResponse(
         content=html,
         headers={
-            "Content-Type": "text/html; charset=utf-8",
             "Cache-Control": "no-store",
             "X-Content-Type-Options": "nosniff"
         }
